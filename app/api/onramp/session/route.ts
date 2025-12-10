@@ -84,7 +84,10 @@ export async function POST(request: NextRequest) {
 
         let sessionTokenResponse: Response;
         try {
-            sessionTokenResponse = await fetch('https://api.developer.coinbase.com/onramp/v1/token', {
+            const apiUrl = 'https://api.developer.coinbase.com/onramp/v1/token';
+            console.log("Making request to:", apiUrl);
+
+            sessionTokenResponse = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -96,15 +99,17 @@ export async function POST(request: NextRequest) {
             });
             clearTimeout(timeoutId);
             console.log("Session Token API response status:", sessionTokenResponse.status);
+            console.log("Response headers:", Object.fromEntries(sessionTokenResponse.headers.entries()));
         } catch (fetchError: any) {
             clearTimeout(timeoutId);
             console.error("Fetch error details:", {
                 name: fetchError.name,
                 message: fetchError.message,
-                cause: fetchError.cause
+                cause: fetchError.cause,
+                stack: fetchError.stack
             });
             if (fetchError.name === 'AbortError' || fetchError.cause?.code === 'ETIMEDOUT') {
-                throw new Error('Request to Coinbase API timed out. Please check your network connection and try again.');
+                throw new Error('Request to Coinbase API timed out. This is likely due to IP whitelisting. Please add your server IP to the Coinbase API key allowlist.');
             }
             throw new Error(`Failed to connect to Coinbase API: ${fetchError.message || 'Network error'}`);
         }

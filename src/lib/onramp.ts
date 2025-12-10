@@ -1,4 +1,4 @@
-import type { BlockchainId } from "@/config/wallets";
+import type { BlockchainId } from "@/src/config/wallet";
 
 const BASE_URL = process.env.NEXT_PUBLIC_COINBASE_ONRAMP_URL!;
 const APP_ID = process.env.NEXT_PUBLIC_COINBASE_APP_ID!;
